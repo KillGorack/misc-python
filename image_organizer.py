@@ -68,19 +68,3 @@ while 1:
     print ("Files detected, calling for a file move..")
     movinator()
   before = after
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
