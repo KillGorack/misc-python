@@ -1,7 +1,9 @@
 from tinytag import TinyTag
 import os
 import sqlite3
-mypath = "C:/Users/dmonr/Music"
+import numpy as np
+mypath = "C:\\Users\\dmonr\\Music"
+filename = "e:\\musical_data.db"
 # =============================================
 # Get all music files into an array..
 # =============================================
@@ -14,8 +16,7 @@ def getfiles(mypath):
 # =============================================
 # database birth
 # =============================================
-def db_init():
-    filename = 'e:/musical_data.db'
+def db_init(filename):
     conn = sqlite3.connect(filename, timeout=10)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS `music_data`
@@ -44,9 +45,9 @@ def db_init():
 # =============================================
 # Cram the data into the DB
 # =============================================
-def gather_data(f):
+def gather_data(f, filename):
+    md = []
     err = 0
-    filename = 'e:\musical_data.db'
     conn = sqlite3.connect(filename)
     c = conn.cursor()
     for song in f:
@@ -72,15 +73,16 @@ def gather_data(f):
             song
             ]
             c.execute('insert into music_data(`album`,`albumartist`,`artist`,`audio_offset`,`bitrate`,`comment`,`disc`,`disc_total`,`duration`,`filesize`,`genre`,`samplerate`,`title`,`track`,`track_total`,`year`,`path`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', item)
+            md.append(tag)
         except:
             err = err + 1
     conn.commit()
     conn.close()
-    return err
+    return [err, len(md)]
 # =============================================
-# Main..
+# do the thing
 # =============================================
-db = db_init()
+db = db_init(filename)
 filelist = getfiles(mypath)
 if db == True and len(filelist) > 0:
-    print(gather_data(filelist))
+    print(gather_data(filelist, filename))
