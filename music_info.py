@@ -123,12 +123,10 @@ def move_files(files, movepath):
         for file in files:
             dest = movepath + "\\" + file[2] + "\\" + file[0] + "\\"
             newpath = dest + file[12] + " " + str(rand_digits(12)) + file[17]
-            try:
+            if not os.path.exists(dest):
                 os.makedirs(dest)
-            except:
-                a = a
             shutil.move(file[16], newpath)
-            print(str(len(files)) + " Files moved.")
+        print(str(len(files)) + " Files moved.")
     else:
         print("no dupes found")
     return True
