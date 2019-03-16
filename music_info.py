@@ -18,6 +18,7 @@ def statement():
 musicpath = "C:\\Users\\David\\Music\\iTunes\\iTunes Media\\Music"
 dbname = "C:\\Users\\David\\Music\\iTunes\\iTunes Media\\musical_data.db"
 movepath = "C:\\Users\\David\\Music\\iTunes\\iTunes Media\\Moved"
+organized = "C:\\Users\\David\\Music\\iTunes\\iTunes Media\\Cleaned"
 # =============================================
 # Get all music files into an array..
 # =============================================
