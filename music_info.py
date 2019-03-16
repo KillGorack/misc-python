@@ -10,6 +10,7 @@ def statement():
     print("This utility will find duplicates using meta data, and move them to a specified location")
     print("It uses album, artist, bitrate, samplerate, and filesize to compare.")
     print("Please see the paths section of this program and modify for your needs")
+    print("THis script DOES NOT consider album art.")
     print("The author of this script is NOT responsible for damage done to your computer, or music library.")
     input("Press enter to continue")
 # =============================================
