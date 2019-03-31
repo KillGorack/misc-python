@@ -6,10 +6,10 @@ from random import randint
 # =============================================
 # Define paths (later use db relative)
 # =============================================
-path_error      = "C:\\Users\\David\\Google Drive\\error"
-path_read       = "C:\\Users\\David\\Google Drive\\Music"
-path_cleaned    = "C:\\Users\\David\\Google Drive\\cleaned"
-path_data       = "C:\\Users\\David\\Google Drive\\musical_data.db"
+path_error      = "//home//dave//Music//error"
+path_read       = "//home//dave//Music//drop"
+path_cleaned    = "//home//dave//Music//library"
+path_data       = "//home//dave//Music//musical_data.db"
 # =============================================
 # Definition for checking paths
 # =============================================
@@ -62,8 +62,7 @@ def db_init(dbname):
     `track_total`       TEXT,
     `year`              TEXT,
     `path`              TEXT,
-    `ext`               TEXT,
-    `art`               TEXT
+    `ext`               TEXT
     )''');
     c.execute("delete from 'music_data'");
     conn.commit()
@@ -101,7 +100,6 @@ def gather_data(file_list, path_data):
     duped = []
     error = []
     test = []
-    temp = "something.png"
     err = 0
     conn = sqlite3.connect(path_data)
     c = conn.cursor()
@@ -126,10 +124,10 @@ def gather_data(file_list, path_data):
             tag.track_total,
             tag.year,
             song,
-            os.path.splitext(song)[1],
-            temp
+            os.path.splitext(song)[1]
             ]
-            comp = ','.join([tag.album, tag.albumartist, tag.title, str(tag.filesize), str(tag.samplerate), str(tag.bitrate)])
+            comp = str(tag.album) + str(tag.albumartist) + str(tag.title) + str(tag.filesize) + str(tag.samplerate) + str(tag.bitrate)
+            print(item)
             if(comp in test):
                 duped.append(item)
             elif len(tag.album.strip()) == 0 or len(tag.albumartist.strip()) == 0 or len(tag.title.strip()) == 0:
@@ -137,27 +135,27 @@ def gather_data(file_list, path_data):
             else:
                 cleaned.append(item)
                 test.append(comp)
-                c.execute('insert into music_data(`album`,`albumartist`,`artist`,`audio_offset`,`bitrate`,`comment`,`disc`,`disc_total`,`duration`,`filesize`,`genre`,`samplerate`,`title`,`track`,`track_total`,`year`,`path`, ext, art) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', item)
+                c.execute('insert into music_data(`album`,`albumartist`,`artist`,`audio_offset`,`bitrate`,`comment`,`disc`,`disc_total`,`duration`,`filesize`,`genre`,`samplerate`,`title`,`track`,`track_total`,`year`,`path`, ext) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', item)
         except:
             error.append(song)
     conn.commit()
     conn.close()
     return [cleaned, duped, error]
 # =============================================
-# Do the thing
+# Your basic cleaner
 # =============================================
 def string_cleaner(cleaned_string):
-    bad_chars = ['~','#','%','&','*','(',')','[',']','{','}','/','\\',':','?','|','\"','\'']
+    bad_chars = ['~','#','%','*','(',')','[',']','{','}','/','/',':','?','|','\"','\'']
     for i in bad_chars:
         cleaned_string = cleaned_string.replace(i, '')
     return cleaned_string
 # =============================================
-# Simple cleaner.
+# Move to cleaned area..
 # =============================================
 def move_to_cleaned(files, movepath):
     if(len(files) > 0):
         for file in files:
-            dest = movepath + "\\" + string_cleaner(file[1]) + "\\" + string_cleaner(file[0]) + "\\"
+            dest = movepath + "/" + string_cleaner(file[1]) + "/" + string_cleaner(file[0]) + "/"
             newpath = dest + string_cleaner(file[12]) + " " + string_cleaner(file[17])
             if not os.path.exists(dest):
                 os.makedirs(dest)
@@ -165,10 +163,13 @@ def move_to_cleaned(files, movepath):
         return True
     else:
         return False
+# =============================================
+# Duplicates
+# =============================================
 def move_to_dupes(files, movepath):
     if(len(files) > 0):
         for file in files:
-            dest = movepath + "\\" + string_cleaner(file[1]) + "\\" + string_cleaner(file[0]) + "\\"
+            dest = movepath + "/" + string_cleaner(file[1]) + "/" + string_cleaner(file[0]) + "/"
             newpath = dest + string_cleaner(file[12]) + " " + string_cleaner(file[17])
             if not os.path.exists(dest):
                 os.makedirs(dest)
@@ -176,18 +177,21 @@ def move_to_dupes(files, movepath):
         return True
     else:
         return False
+# =============================================
+# error
+# =============================================
 def move_to_error(files, movepath):
     if(len(files) > 0):
         for file in files:
             if(len(file) <> 19):
-
+                a=1
             else:
-                dest = movepath + "\\" + string_cleaner(file[1]) + "\\" + string_cleaner(file[0]) + "\\"
+                dest = movepath + "/" + string_cleaner(file[1]) + "/" + string_cleaner(file[0]) + "/"
                 newpath = dest + string_cleaner(file[12]) + " " + string_cleaner(file[17])
                 if not os.path.exists(dest):
                     os.makedirs(dest)
                 shutil.copy(file[16], newpath)
-        return True
+        return Truedd
     else:
         return False
 # =============================================
@@ -198,9 +202,6 @@ if precheck[0] == False:
     db_init(path_data)
     file_list = getfiles(path_read)
     inventory = gather_data(file_list, path_data)
-    #move_to_cleaned(inventory[0], path_cleaned)
+    move_to_cleaned(inventory[0], path_cleaned)
     move_to_dupes(inventory[1], path_error)
     move_to_error(inventory[1], path_error)
-    print(inventory[2])
-else:
-    print(precheck[1])
